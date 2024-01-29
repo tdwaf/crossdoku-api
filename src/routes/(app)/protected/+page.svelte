@@ -4,8 +4,8 @@
 	import { Textarea } from '$lib/components/ui/textarea'
 	import { AlertCircle } from 'lucide-svelte'
 	import { Terminal } from 'lucide-svelte'
-  import { Label } from "$lib/components/ui/label";
-  import * as Dialog from "$lib/components/ui/dialog";
+	import { getGridLayout } from './grid'
+	import * as Dialog from '$lib/components/ui/dialog'
 	import * as Alert from '$lib/components/ui/alert'
 	import Navbar from '$lib/components/Navbar.svelte'
 
@@ -33,18 +33,89 @@
 		}
 	}
 
+	async function addTitlesToAnimeTitlesTable(titles: string) {
+		await deleteAnimeTitles()
+		const titleList = titles.split(',')
+		console.log(titleList)
+		for (const title of titleList) {
+			const { error } = await supabase.from('anime_titles').upsert({ answer: title })
+
+			if (error) {
+				isError = true
+				errorMessage = error.message
+				throw new Error(error.message)
+			}
+		}
+	}
+
+	async function getTitlesFromAnimeTitlesTable() {
+		const { data, error } = await supabase.from('anime_titles').select('answer')
+
+		if (error) {
+			isError = true
+			errorMessage = error.message
+			throw new Error(error.message)
+		}
+
+		return data
+	}
+
+	async function assertDataInTable(): Promise<boolean> {
+		let areEntries = false
+		const { data, error } = await supabase.from('crossdoku_grid').select('grid_number')
+
+		if (error) {
+			isError = true
+			errorMessage = error.message
+			throw new Error(error.message)
+		}
+
+		if (data?.length !== 0) {
+			areEntries = true
+		}
+
+		return areEntries
+	}
+
 	async function handleInput() {
 		if (updateToggle) {
-			const titles = textValue.split(',')
+			const titles = await getTitlesFromAnimeTitlesTable()
+			const dataAlreadyExists = await assertDataInTable()
 
-			for (const title of titles) {
-				const { error } = await supabase.from('anime_titles').insert({ answer: title })
+			if (dataAlreadyExists) {
+				const currentTitles = [...titles].map((t) => t.answer).join(', ')
+				const newTitles = `${currentTitles}, ${textValue}`
+				await addTitlesToAnimeTitlesTable(newTitles)
+				const layout = getGridLayout(newTitles)
+
+				const { error } = await supabase.from('crossdoku_grid').upsert({
+					rows: layout.rows,
+					columns: layout.cols,
+					result: layout.result
+				})
 
 				if (error) {
 					isError = true
 					errorMessage = error.message
 					throw new Error(error.message)
 				}
+
+				textValue = ''
+				isComplete = true
+				return
+			}
+
+			const layout = getGridLayout(textValue)
+			const { error } = await supabase.from('crossdoku_grid').insert({
+				rows: layout.rows,
+				columns: layout.cols,
+				result: layout.result
+			})
+
+			if (error) {
+				isError = true
+				errorMessage = error.message
+				throw new Error(error.message)
 			}
 
 			textValue = ''
@@ -53,18 +124,24 @@
 		}
 
 		if (overwriteToggle) {
-			const titles = textValue.split(',')
-			deleteAnimeTitles()
+			const layout = getGridLayout(textValue)
+			await addTitlesToAnimeTitlesTable(textValue)
 
-			for (const title of titles) {
-				const { error } = await supabase.from('anime_titles').insert({ answer: title })
+			const { error } = await supabase.from('crossdoku_grid').upsert({
+				grid_number: 1,
+				rows: layout.rows,
+				columns: layout.cols,
+				result: layout.result
+			})
 
-				if (error) {
-					isError = true
-					errorMessage = error.message
-					throw new Error(error.message)
-				}
+			if (error) {
+				isError = true
+				errorMessage = error.message
+				throw new Error(error.message)
 			}
+
+			textValue = ''
+			isComplete = true
 			return
 		}
 	}
@@ -89,39 +166,40 @@
 {/if}
 
 <div>
-	<header class="text-xl font-extrabold leading-tight tracking-tighter md:text-xl flex justify-center mt-3">Making changes to the database is super simple.</header>
+	<header
+		class="text-xl font-extrabold leading-tight tracking-tighter md:text-xl flex justify-center mt-3"
+	>
+		Making changes to the database is super simple.
+	</header>
 
-  <div class="flex justify-center mt-1">
-    <Dialog.Root>
-      <Dialog.Trigger>
-        <Button>Instructions</Button>
-      </Dialog.Trigger>
-      <Dialog.Content class="sm:max-w-[425px]">
-        <Dialog.Header>
-          <Dialog.Title>Instructions</Dialog.Title>
-          <Dialog.Description>
-            <p>
-              If you want to add a title to the already existing titles list, toggle 'Add Titles'
-            </p>
+	<div class="flex justify-center mt-1">
+		<Dialog.Root>
+			<Dialog.Trigger>
+				<Button>Instructions</Button>
+			</Dialog.Trigger>
+			<Dialog.Content class="sm:max-w-[425px]">
+				<Dialog.Header>
+					<Dialog.Title>Instructions</Dialog.Title>
+					<Dialog.Description>
+						<p>
+							If you want to add a title to the already existing titles list, toggle 'Add Titles'
+						</p>
 
-            <br />
+						<br />
 
-            <p>
-              If you want to overwrite all titles, toggle 'Overwrite Titles'
-            </p>
+						<p>If you want to overwrite all titles, toggle 'Overwrite Titles'</p>
 
-            <br />
+						<br />
 
-            <p>
-              After toggling, enter the titles in a comma separated list (ex: anime1, anime2). If you're only adding one title, you can just enter the title without a comma.
-            </p>
-          </Dialog.Description>
-        </Dialog.Header>
-          
-      </Dialog.Content>
-    </Dialog.Root>
-  </div>
-	
+						<p>
+							After toggling, enter the titles in a comma separated list (ex: anime1, anime2). If
+							you're only adding one title, you can just enter the title without a comma.
+						</p>
+					</Dialog.Description>
+				</Dialog.Header>
+			</Dialog.Content>
+		</Dialog.Root>
+	</div>
 </div>
 
 <div class="flex flex-row justify-center mt-5">

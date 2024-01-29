@@ -1,9 +1,6 @@
 <script lang="ts">
 	import { page } from '$app/stores'
-
 	$: searchParams = new URLSearchParams($page.url.hash.substring(1))
-
-	// TODO: sentry log?
 </script>
 
 <div>
