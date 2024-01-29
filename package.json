@@ -45,6 +45,7 @@
 		"@supabase/auth-ui-svelte": "^0.2.8",
 		"@supabase/ssr": "^0.0.10",
 		"@supabase/supabase-js": "^2.39.1",
+		"@sveltejs/adapter-cloudflare": "^4.1.0",
 		"bits-ui": "^0.16.0",
 		"clsx": "^2.1.0",
 		"cmdk-sv": "^0.0.13",
