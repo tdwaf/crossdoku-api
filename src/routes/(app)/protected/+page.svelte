@@ -4,6 +4,8 @@
 	import { Textarea } from '$lib/components/ui/textarea'
 	import { AlertCircle } from 'lucide-svelte'
 	import { Terminal } from 'lucide-svelte'
+  import { Label } from "$lib/components/ui/label";
+  import * as Dialog from "$lib/components/ui/dialog";
 	import * as Alert from '$lib/components/ui/alert'
 	import Navbar from '$lib/components/Navbar.svelte'
 
@@ -87,12 +89,40 @@
 {/if}
 
 <div>
-	<header>Making changes to the database is super simple.</header>
+	<header class="text-xl font-extrabold leading-tight tracking-tighter md:text-xl flex justify-center mt-3">Making changes to the database is super simple.</header>
 
-	<p>For inserting anime titles (won't overwrite the existing titles), ensure you toggle update.</p>
+  <div class="flex justify-center mt-1">
+    <Dialog.Root>
+      <Dialog.Trigger>
+        <Button>Instructions</Button>
+      </Dialog.Trigger>
+      <Dialog.Content class="sm:max-w-[425px]">
+        <Dialog.Header>
+          <Dialog.Title>Instructions</Dialog.Title>
+          <Dialog.Description>
+            <p>
+              If you want to add a title to the already existing titles list, toggle 'Add Titles'
+            </p>
+
+            <br />
+
+            <p>
+              If you want to overwrite all titles, toggle 'Overwrite Titles'
+            </p>
+
+            <br />
+
+            <p>
+              After toggling, enter the titles in a comma separated list (ex: anime1, anime2). If you're only adding one title, you can just enter the title without a comma.
+            </p>
+          </Dialog.Description>
+        </Dialog.Header>
+          
+      </Dialog.Content>
+    </Dialog.Root>
+  </div>
+	
 </div>
-
-<h1>This is a protected page.</h1>
 
 <div class="flex flex-row justify-center mt-5">
 	<Toggle class="mr-2" variant="outline" bind:pressed={updateToggle}>Add Titles</Toggle>
