@@ -1,10 +1,10 @@
-import { VITE_PUBLIC_SUPABASE_URL, VITE_PUBLIC_SUPABASE_ANON_KEY } from '$env/static/private'
+import { env } from '$env/dynamic/public'
 import { createServerClient } from '@supabase/ssr'
 import type { Handle } from '@sveltejs/kit'
 import { sequence } from '@sveltejs/kit/hooks'
 
 const createSupabaseClient: Handle = async ({ event, resolve }) => {
-	event.locals.supabase = createServerClient(VITE_PUBLIC_SUPABASE_URL, VITE_PUBLIC_SUPABASE_ANON_KEY, {
+	event.locals.supabase = createServerClient(env.PUBLIC_SUPABASE_URL, env.PUBLIC_SUPABASE_ANON_KEY, {
 		cookies: {
 			get: (key) => event.cookies.get(key),
 			// NOTE: defaulting path to '/' here to support Sveltekit v2 which requires it to be
@@ -18,11 +18,6 @@ const createSupabaseClient: Handle = async ({ event, resolve }) => {
 		}
 	})
 
-	/**
-	 * a little helper that is written for convenience so that instead
-	 * of calling `const { data: { session } } = await supabase.auth.getSession()`
-	 * you just call this `await getSession()`
-	 */
 	event.locals.getSession = async () => {
 		const {
 			data: { session }
