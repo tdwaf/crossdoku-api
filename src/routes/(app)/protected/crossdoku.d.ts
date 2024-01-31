@@ -10,3 +10,16 @@ export interface CrosswordLayoutResponse {
 	cols: number
 	result: Array<CrosswordLayoutResult>
 }
+
+export interface CrossdokuEntry {
+	answer: string
+	orientation: string
+	startx: number
+	starty: number
+}
+
+export interface CrossdokuCell {
+	x: number
+	y: number
+	letter: string | null
+}
