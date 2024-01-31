@@ -12,8 +12,6 @@
 	let supabaseStore = writable<typeof supabase>()
 	$: supabaseStore.set(supabase)
 
-	// this is necessary to ensure that subscriptions to old supabase clients are cleaned up properly
-	// when a new client is retrieved from the loader.
 	let supabaseAuthStateChangeSubscriptionStore = derived(supabaseStore, ($supabaseStore, set) => {
 		const {
 			data: { subscription }

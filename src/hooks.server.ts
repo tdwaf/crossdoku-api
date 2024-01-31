@@ -4,19 +4,21 @@ import type { Handle } from '@sveltejs/kit'
 import { sequence } from '@sveltejs/kit/hooks'
 
 const createSupabaseClient: Handle = async ({ event, resolve }) => {
-	event.locals.supabase = createServerClient(env.PUBLIC_SUPABASE_URL, env.PUBLIC_SUPABASE_ANON_KEY, {
-		cookies: {
-			get: (key) => event.cookies.get(key),
-			// NOTE: defaulting path to '/' here to support Sveltekit v2 which requires it to be
-			// specified.
-			set: (key, value, options) => {
-				event.cookies.set(key, value, { path: '/', ...options })
-			},
-			remove: (key, options) => {
-				event.cookies.delete(key, { path: '/', ...options })
+	event.locals.supabase = createServerClient(
+		env.PUBLIC_SUPABASE_URL,
+		env.PUBLIC_SUPABASE_ANON_KEY,
+		{
+			cookies: {
+				get: (key) => event.cookies.get(key),
+				set: (key, value, options) => {
+					event.cookies.set(key, value, { path: '/', ...options })
+				},
+				remove: (key, options) => {
+					event.cookies.delete(key, { path: '/', ...options })
+				}
 			}
 		}
-	})
+	)
 
 	event.locals.getSession = async () => {
 		const {
@@ -27,7 +29,6 @@ const createSupabaseClient: Handle = async ({ event, resolve }) => {
 
 	return resolve(event, {
 		filterSerializedResponseHeaders(name) {
-			// supabase needs the content-range header
 			return name === 'content-range'
 		}
 	})
