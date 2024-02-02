@@ -27,6 +27,8 @@ npm i
 
 ### Local Development
 ```
+# create a .env file and add the required information detailed in the .env.example file before
+
 # start development server
 npm run dev
 
