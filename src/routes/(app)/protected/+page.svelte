@@ -91,7 +91,8 @@
 					answer: item.answer,
 					startx: item.startx,
 					starty: item.starty,
-					orientation: item.orientation
+					orientation: item.orientation,
+					position: item.number
 				})
 			)
 		}
