@@ -3,6 +3,7 @@ interface CrosswordLayoutResult {
 	startx: number
 	starty: number
 	orientation: string
+	position: number
 }
 
 export interface CrosswordLayoutResponse {
@@ -14,6 +15,7 @@ export interface CrosswordLayoutResponse {
 export interface CrossdokuEntry {
 	answer: string
 	orientation: string
+	position: number
 	startx: number
 	starty: number
 }
