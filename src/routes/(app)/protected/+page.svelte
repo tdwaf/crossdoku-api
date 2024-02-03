@@ -69,7 +69,7 @@
 			}
 		}
 
-		await getGridDataFromGridTable();
+		await getGridDataFromGridTable()
 	}
 
 	async function getGridDataFromGridTable() {
@@ -149,7 +149,7 @@
 
 				await upsertCrossdokuGrid(layout)
 
-				await getGridDataFromGridTable();
+				await getGridDataFromGridTable()
 
 				textValue = ''
 				isComplete = true
@@ -161,7 +161,7 @@
 
 				await upsertCrossdokuGrid(layout)
 
-				await getGridDataFromGridTable();
+				await getGridDataFromGridTable()
 
 				textValue = ''
 				isComplete = true
@@ -187,7 +187,7 @@
 				throw new Error(error.message)
 			}
 
-			await getGridDataFromGridTable();
+			await getGridDataFromGridTable()
 
 			textValue = ''
 			isComplete = true

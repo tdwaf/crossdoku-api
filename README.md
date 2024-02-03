@@ -17,8 +17,9 @@ TODO: Add architecture documentation
 :exclamation: **IMPORTANT**: This project is an internal project for Kusogaki and pull requests by those outside the team will not be accepted.
 
 ### Setup
+
 ```
-# clone repository 
+# clone repository
 git clone https://github.com/tdwaf/crossdoku-api.git
 
 # install packages
@@ -26,6 +27,7 @@ npm i
 ```
 
 ### Local Development
+
 ```
 # create a .env file and add the required information detailed in the .env.example file before running server
 
