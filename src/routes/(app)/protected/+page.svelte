@@ -135,43 +135,6 @@
 		}
 	}
 
-	async function upsertLetterIndexData(index: number, updatedCell: CrossdokuCell) {
-		const { error } = await supabase.from('letter_index').insert({
-			id: index,
-			letter: updatedCell.letter,
-			x: updatedCell.x,
-			y: updatedCell.y,
-			userInput: updatedCell.userInput,
-			isCorrect: updatedCell.isCorrect
-		})
-
-		if (error) {
-			isError = true
-			errorMessage = error.message
-			throw new Error(error.message)
-		}
-	}
-
-	async function parseGridForLetterIndex(gridData: CrossdokuCell[][]): Promise<void> {
-		const { error } = await supabase.from('letter_index').delete().neq('isCorrect', true)
-
-		if (error) {
-			isError = true
-			errorMessage = error.message
-			throw new Error(error.message)
-		}
-
-		gridData.forEach((row) => {
-			row.forEach(async (cell) => {
-				const updatedCell = {
-					...cell,
-					userInput: cell.letter?.toUpperCase() || ''
-				}
-				await upsertLetterIndexData(index++, updatedCell)
-			})
-		})
-	}
-
 	async function handleInput() {
 		if (addToggle) {
 			const gridExists = await assertDataInGridTable()
@@ -189,8 +152,6 @@
 
 				await getGridDataFromGridTable()
 
-				await parseGridForLetterIndex(gridData)
-
 				textValue = ''
 				isComplete = true
 				return
@@ -202,8 +163,6 @@
 				await upsertCrossdokuGrid(layout)
 
 				await getGridDataFromGridTable()
-
-				await parseGridForLetterIndex(gridData)
 
 				textValue = ''
 				isComplete = true
@@ -230,8 +189,6 @@
 			}
 
 			await getGridDataFromGridTable()
-
-			await parseGridForLetterIndex(gridData)
 
 			textValue = ''
 			isComplete = true

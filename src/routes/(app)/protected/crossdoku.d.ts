@@ -24,6 +24,4 @@ export interface CrossdokuCell {
 	x: number
 	y: number
 	letter: string | null
-	userInput: string | null
-	isCorrect: boolean
 }
