@@ -19,6 +19,7 @@
 	let addToggle = false
 	let overwriteToggle = false
 	let showGrid = false
+	let index = 0
 
 	let isError = false
 	let errorMessage = ''
@@ -134,6 +135,44 @@
 		}
 	}
 
+	async function upsertLetterIndexData(index: number, updatedCell: CrossdokuCell) {
+		const { error } = await supabase.from('letter_index').insert({
+					id: index,
+					letter: updatedCell.letter,
+					x: updatedCell.x,
+					y: updatedCell.y,
+					userInput: updatedCell.userInput,
+					isCorrect: updatedCell.isCorrect
+				})
+
+				if (error) {
+					isError = true
+					errorMessage = error.message
+					throw new Error(error.message)
+				}
+	}
+
+	async function parseGridForLetterIndex(gridData: CrossdokuCell[][]): Promise<void> {
+		const { error } = await supabase.from('letter_index').delete()
+			.neq('isCorrect', true)
+
+				if (error) {
+					isError = true
+					errorMessage = error.message
+					throw new Error(error.message)
+				}
+
+		gridData.forEach((row) => {
+			row.forEach(async (cell) => {
+				const updatedCell = {
+					...cell,
+					userInput: cell.letter?.toUpperCase() || ''
+				}
+				await upsertLetterIndexData(index++, updatedCell)
+			})
+		})
+	}
+
 	async function handleInput() {
 		if (addToggle) {
 			const gridExists = await assertDataInGridTable()
@@ -151,6 +190,8 @@
 
 				await getGridDataFromGridTable()
 
+				await parseGridForLetterIndex(gridData)
+
 				textValue = ''
 				isComplete = true
 				return
@@ -162,6 +203,8 @@
 				await upsertCrossdokuGrid(layout)
 
 				await getGridDataFromGridTable()
+
+				await parseGridForLetterIndex(gridData)
 
 				textValue = ''
 				isComplete = true
@@ -188,6 +231,8 @@
 			}
 
 			await getGridDataFromGridTable()
+
+			await parseGridForLetterIndex(gridData)
 
 			textValue = ''
 			isComplete = true
@@ -288,18 +333,19 @@
 	.container {
 		display: flex;
 		align-items: flex-start;
-		justify-content: center;
+		justify-content: space-between;
 		margin-top: 3%;
 	}
 
 	.crossword-grid {
 		display: grid;
 		grid-gap: 1px;
+		margin: auto;
 		margin-right: 1rem;
 		border-radius: 10px;
 		box-shadow: 0px 6px 8px #aaa;
 		overflow: hidden;
-		max-width: 50vw;
+		max-width: 100vw;
 		max-height: 80vh;
 		width: 100%;
 		height: 100%;
@@ -324,10 +370,9 @@
 
 	@media (max-width: 900px) {
 		.crossword-grid {
-			grid-template-columns: repeat(var(--numCols), var(--cell-size));
-			grid-auto-rows: var(--cell-size);
-			max-width: 90vw;
-			height: auto;
+			grid-template-columns: repeat(var(--numCols), minmax(0, 1fr));
+			grid-auto-rows: minmax(0, 1fr);
+			flex-direction: column;
 		}
 
 		.container {
@@ -337,8 +382,8 @@
 
 	@media (max-width: 320px) {
 		.crossword-grid {
-			--cell-size-width: calc(50vh / var(--numCols));
-			--cell-size-height: calc(50vh / var(--numRows));
+			--cell-size-width: calc(100vw / var(--numCols));
+			--cell-size-height: calc(100vh / var(--numRows));
 			--cell-size: min(var(--cell-size-width), var(--cell-size-height));
 
 			grid-template-columns: repeat(var(--numCols), var(--cell-size));
