@@ -13,7 +13,9 @@ function createRow(rowLength: number, rowIndex: number): CrossdokuCell[] {
 	return Array.from({ length: rowLength }, (_, columnIndex) => ({
 		x: columnIndex,
 		y: rowIndex,
-		letter: null
+		letter: null,
+		userInput: '',
+		isCorrect: false
 	}))
 }
 
