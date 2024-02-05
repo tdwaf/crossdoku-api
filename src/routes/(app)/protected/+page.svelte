@@ -19,7 +19,6 @@
 	let addToggle = false
 	let overwriteToggle = false
 	let showGrid = false
-	let index = 0
 
 	let isError = false
 	let errorMessage = ''
@@ -267,7 +266,7 @@
 </div>
 
 {#if showGrid}
-	<div class="container mt-1">
+	<div class="container">
 		<div
 			class="crossword-grid"
 			style="grid-template-columns: {gridStyleColumns}; grid-template-rows: {gridStyleRows};"
@@ -291,6 +290,7 @@
 		align-items: flex-start;
 		justify-content: space-between;
 		margin-top: 3%;
+		max-height: 100vh;
 	}
 
 	.crossword-grid {
@@ -301,10 +301,9 @@
 		border-radius: 10px;
 		box-shadow: 0px 6px 8px #aaa;
 		overflow: hidden;
-		max-width: 100vw;
-		max-height: 80vh;
 		width: 100%;
 		height: 100%;
+		margin-bottom: 30px;
 	}
 
 	.cell {
@@ -326,20 +325,15 @@
 
 	@media (max-width: 900px) {
 		.crossword-grid {
-			grid-template-columns: repeat(var(--numCols), minmax(0, 1fr));
-			grid-auto-rows: minmax(0, 1fr);
-			flex-direction: column;
-		}
-
-		.container {
-			flex-direction: column;
+			--cell-size-width: calc(100vw / var(--numCols));
+			--cell-size-height: calc(80vh / var(--numRows));
 		}
 	}
 
 	@media (max-width: 320px) {
 		.crossword-grid {
 			--cell-size-width: calc(100vw / var(--numCols));
-			--cell-size-height: calc(100vh / var(--numRows));
+			--cell-size-height: calc(80vh / var(--numRows));
 			--cell-size: min(var(--cell-size-width), var(--cell-size-height));
 
 			grid-template-columns: repeat(var(--numCols), var(--cell-size));
