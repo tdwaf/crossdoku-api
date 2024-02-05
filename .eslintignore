@@ -15,3 +15,6 @@ yarn.lock
 # Ignore generated files
 /src/lib/generated
 /supabase/.temp
+
+# Ignore shadcn components
+/src/lib/components/ui

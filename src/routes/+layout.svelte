@@ -1,7 +1,6 @@
 <script lang="ts">
 	import '../global.css'
 	import { invalidate } from '$app/navigation'
-	import { error, fail } from '@sveltejs/kit'
 	import { onMount } from 'svelte'
 	import { derived, writable } from 'svelte/store'
 	import { goto } from '$app/navigation'

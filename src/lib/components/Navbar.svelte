@@ -38,9 +38,3 @@
 		</div>
 	</div>
 </header>
-
-<style>
-	.active {
-		@apply text-primary;
-	}
-</style>
