@@ -46,13 +46,13 @@
 	"dependencies": {
 		"@supabase/auth-ui-svelte": "^0.2.9",
 		"@supabase/ssr": "^0.1.0",
-		"@supabase/supabase-js": "^2.39.8",
+		"@supabase/supabase-js": "^2.40.0",
 		"@sveltejs/adapter-cloudflare": "^4.2.0",
-		"bits-ui": "^0.19.7",
+		"bits-ui": "^0.20.1",
 		"clsx": "^2.1.0",
-		"cmdk-sv": "^0.0.15",
+		"cmdk-sv": "^0.0.16",
 		"formsnap": "^0.5.1",
-		"sveltekit-superforms": "^2.10.4",
+		"sveltekit-superforms": "^2.11.0",
 		"tailwind-merge": "^2.2.2",
 		"tailwind-variants": "^0.2.1",
 		"zod": "^3.22.4"
